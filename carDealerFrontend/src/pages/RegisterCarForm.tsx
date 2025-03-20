@@ -231,7 +231,7 @@ const RegisterCarForm: React.FC = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="text-gray-400">$</span>
+                  <span className="text-gray-400">#</span>
                 </div>
                 <motion.input
                   type="number"

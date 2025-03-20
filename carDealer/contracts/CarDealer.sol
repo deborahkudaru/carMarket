@@ -4,14 +4,13 @@ pragma solidity ^0.8.28;
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 import "./lib/Events.sol";
 import "./lib/Errors.sol";
 
-contract CarDealer is ERC721, Ownable {
+contract CarDealer is Ownable {
     using Strings for uint256;
 
     struct Car {
@@ -35,7 +34,7 @@ contract CarDealer is ERC721, Ownable {
 
     constructor(
         string memory _baseURI
-    ) ERC721("CarNFT", "GLK") Ownable(msg.sender) {
+    ) Ownable(msg.sender) {
         baseURI = _baseURI;
     }
 
@@ -57,43 +56,26 @@ contract CarDealer is ERC721, Ownable {
             price: _price,
             owner: msg.sender,
             seller: payable(msg.sender),
-            forSale: true,
+            forSale: true,  // Car is automatically for sale
             previousOwners: new address[](0),
             imageURI: _imageURI
         });
 
         userCars[msg.sender].push(carId);
-        listedCars.push(carId);
+        listedCars.push(carId);  // Add to listed cars immediately
 
-        _mint(msg.sender, carId);
         emit Events.CarRegistered(carId, msg.sender);
         emit Events.CarImageUpdated(carId, _imageURI);
+        emit Events.CarListed(carId, _price);  // Emit listing event
     }
 
-    function updateCarImage(
-        uint256 _carId,
-        string memory _newImageURI
-    ) external {
-        if (msg.sender != cars[_carId].owner) {
-            revert Errors.NotCarOwner();
-        }
-        require(bytes(_newImageURI).length > 0, "Image URI cannot be empty");
-
-        cars[_carId].imageURI = _newImageURI;
-        emit Events.CarImageUpdated(_carId, _newImageURI);
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
-        _requireOwned(tokenId);
-
-        string memory carImageURI = cars[tokenId].imageURI;
+    function getCarImageURI(uint256 carId) public view returns (string memory) {
+        string memory carImageURI = cars[carId].imageURI;
 
         if (bytes(carImageURI).length > 0) {
             return carImageURI;
         } else if (bytes(baseURI).length > 0) {
-            return string.concat(baseURI, tokenId.toString());
+            return string.concat(baseURI, Strings.toString(carId));
         } else {
             return "";
         }
@@ -101,31 +83,6 @@ contract CarDealer is ERC721, Ownable {
 
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
         baseURI = _newBaseURI;
-    }
-
-    function exists(uint256 tokenId) public view returns (bool) {
-        try this.ownerOf(tokenId) {
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    function forSale(uint256 _carId, uint256 _price) external {
-        if (msg.sender != cars[_carId].owner) {
-            revert Errors.NotCarOwner();
-        }
-        if (cars[_carId].forSale) {
-            revert Errors.CarAlreadyListed();
-        }
-        require(_price > 0, "Price must be greater than zero");
-
-        cars[_carId].forSale = true;
-        cars[_carId].price = _price;
-
-        listedCars.push(_carId);
-
-        emit Events.CarListed(_carId, _price);
     }
 
     function buyCar(uint256 _carId) external payable {
@@ -139,8 +96,6 @@ contract CarDealer is ERC721, Ownable {
 
         car.seller.transfer(msg.value);
 
-        _transfer(car.owner, msg.sender, _carId);
-
         car.previousOwners.push(car.owner);
         carHistory[_carId].push(car.owner);
 
@@ -149,6 +104,7 @@ contract CarDealer is ERC721, Ownable {
 
         car.forSale = false;
 
+        // Remove from listedCars array
         for (uint256 i = 0; i < listedCars.length; i++) {
             if (listedCars[i] == _carId) {
                 listedCars[i] = listedCars[listedCars.length - 1];
