@@ -56,17 +56,17 @@ contract CarDealer is Ownable {
             price: _price,
             owner: msg.sender,
             seller: payable(msg.sender),
-            forSale: true,  // Car is automatically for sale
+            forSale: true,  
             previousOwners: new address[](0),
             imageURI: _imageURI
         });
 
         userCars[msg.sender].push(carId);
-        listedCars.push(carId);  // Add to listed cars immediately
+        listedCars.push(carId);  
 
         emit Events.CarRegistered(carId, msg.sender);
         emit Events.CarImageUpdated(carId, _imageURI);
-        emit Events.CarListed(carId, _price);  // Emit listing event
+        emit Events.CarListed(carId, _price);  
     }
 
     function getCarImageURI(uint256 carId) public view returns (string memory) {

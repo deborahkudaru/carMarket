@@ -8,7 +8,7 @@ import { parseEther, formatEther } from "viem";
 import rawFactoryABI from "../abi/CarDealer.json";
 import { uploadToPinata } from "../utils/Pinata";
 
-const carDealerAddress = "0x179BB60fa49Ed45437C51D352e4E36d1F078E6Af";
+const carDealerAddress = "0x39B74Fa2E69C0256f8b34dBfa9cfE20e0438388c";
 const carDealerABI = rawFactoryABI.abi;
 
 export function useRegisterCar() {

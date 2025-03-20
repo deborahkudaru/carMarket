@@ -4,7 +4,7 @@ import ListedCars from "./pages/ListedCars";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import RegisterCarForm from "./pages/RegisterCarForm";
-import ListCarForSale from "./pages/ListCarForSale";
+// import ListCarForSale from "./pages/ListCarForSale";
 
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/listed-cars" element={<ListedCars />} />
         <Route path="/form" element={<RegisterCarForm />} />
-        <Route path="/list-car" element={<ListCarForSale />} />
+        {/* <Route path="/list-car" element={<ListCarForSale />} /> */}
       </Routes>
       <Footer />
     </div>
