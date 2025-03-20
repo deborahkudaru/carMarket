@@ -10,4 +10,5 @@ library Events {
     );
     event CarListed(uint256 indexed carId, uint256 price);
     event CarPriceUpdated(uint256 indexed carId, uint256 newPrice);
+    event CarImageUpdated(uint256 indexed carId, string imageURI);
 }

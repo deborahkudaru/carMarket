@@ -3,18 +3,9 @@
 
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const JAN_1ST_2030 = 1893456000;
-const ONE_GWEI: bigint = 1_000_000_000n;
-
-const LockModule = buildModule("LockModule", (m) => {
-  const unlockTime = m.getParameter("unlockTime", JAN_1ST_2030);
-  const lockedAmount = m.getParameter("lockedAmount", ONE_GWEI);
-
-  const lock = m.contract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  return { lock };
+module.exports = buildModule("CarDealerModule", (m) => {
+  const baseURI = "https://gateway.pinata.cloud/ipfs/bafkreif6lc3oqpmvoxds46jglk7puhecmqw43fxccdgr7tbk5caeowo5sq";
+  const carDealer = m.contract("CarDealer", [baseURI]);
+  
+  return { carDealer };
 });
-
-export default LockModule;
