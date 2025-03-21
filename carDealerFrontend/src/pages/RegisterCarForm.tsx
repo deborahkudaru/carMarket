@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { uploadToPinata } from "../utils/Pinata";
 import { Toaster, toast } from "react-hot-toast";
 import { useAccount } from "wagmi";
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   model: string;
@@ -14,6 +15,7 @@ interface FormData {
 const RegisterCarForm: React.FC = () => {
 
   const { address } = useAccount();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormData>({
     model: "",
@@ -115,6 +117,8 @@ const RegisterCarForm: React.FC = () => {
 
   if(uploadSuccess){
     toast.success("Registeration successful!");
+
+    navigate('/my cars');
   }
 
   if(uploadError){

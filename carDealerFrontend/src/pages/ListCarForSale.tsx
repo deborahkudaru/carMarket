@@ -7,7 +7,6 @@ const CarListings: React.FC = () => {
   const [selectedCar, setSelectedCar] = React.useState<any | null>(null);
 
   useEffect(() => {
-    // Refresh cars when component mounts
     refreshCars();
   }, []);
 
@@ -17,7 +16,6 @@ const CarListings: React.FC = () => {
 
   const handleCloseModal = () => {
     setSelectedCar(null);
-    // Refresh car listings after purchase
     refreshCars();
   };
 

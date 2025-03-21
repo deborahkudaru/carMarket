@@ -1,5 +1,5 @@
 import React from "react";
-import { useBuyCar } from "../hooks/useCarDealer.tsx"
+import { useBuyCar } from "../hooks/useCarDealer"
 
 const BuyCar: React.FC<{ initialCarId?: string; initialPrice?: bigint }> = ({
   initialCarId = "",

@@ -108,29 +108,56 @@ export function useBuyCar() {
 export function useGetCarsForSale() {
   const [cars, setCars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { data: carsData, refetch } = useReadContract({
+  const [error, setError] = useState<Error | null>(null);
+  
+  const { 
+    data: carsData, 
+    refetch, 
+    isError, 
+    error: contractError
+  } = useReadContract({
     address: carDealerAddress,
     abi: carDealerABI,
     functionName: "getCarsForSale",
   });
+  
+  useEffect(() => {
+    if (isError && contractError) {
+      console.error("Error fetching cars:", contractError);
+      setError(contractError instanceof Error ? contractError : new Error("Failed to fetch cars"));
+      setLoading(false);
+    }
+  }, [isError, contractError]);
 
   useEffect(() => {
     if (carsData) {
-      const formattedCars = formatCarData(carsData as any[]);
-      setCars(formattedCars);
-      setLoading(false);
+      try {
+        const formattedCars = formatCarData(carsData as any[]);
+        setCars(formattedCars);
+        setError(null);
+      } catch (err) {
+        console.error("Error formatting car data:", err);
+        setError(err instanceof Error ? err : new Error("Failed to format car data"));
+      } finally {
+        setLoading(false);
+      }
     }
   }, [carsData]);
 
   const refreshCars = async () => {
     setLoading(true);
-    await refetch();
+    setError(null);
+    try {
+      await refetch();
+    } catch (err) {
+      console.error("Error refreshing cars:", err);
+      setError(err instanceof Error ? err : new Error("Failed to refresh cars"));
+      setLoading(false);
+    }
   };
 
-  return { cars, loading, refreshCars };
+  return { cars, loading, error, refreshCars };
 }
-
 export function useGetMyCars() {
   const [cars, setCars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
