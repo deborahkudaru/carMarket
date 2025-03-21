@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { uploadToPinata } from "../utils/Pinata";
 import { Toaster, toast } from "react-hot-toast";
+import { useAccount } from "wagmi";
 
 interface FormData {
   model: string;
@@ -11,6 +12,9 @@ interface FormData {
 }
 
 const RegisterCarForm: React.FC = () => {
+
+  const { address } = useAccount();
+
   const [formData, setFormData] = useState<FormData>({
     model: "",
     price: "",
@@ -80,6 +84,11 @@ const RegisterCarForm: React.FC = () => {
     setIsUploading(true);
     setUploadError(null);
     setUploadSuccess(null);
+
+    if (!address) {
+      toast.error("Connect wallet before deploying token");
+      return;
+    }
 
     if (!formData.image) {
       setUploadError("Please select an image to upload.");
